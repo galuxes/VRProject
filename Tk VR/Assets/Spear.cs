@@ -9,7 +9,8 @@ using UnityEngine.XR.Interaction.Toolkit;
 public class Spear : MonoBehaviour
 {
     [SerializeField] private Rigidbody _rb;
-    public bool isFlying = false;
+    [SerializeField] private bool isFlying = false;
+    
     
     private void Update()
     {
@@ -24,7 +25,6 @@ public class Spear : MonoBehaviour
         if (!other.gameObject.CompareTag("Player"))
         {
             isFlying = false;
-            _rb.constraints = RigidbodyConstraints.FreezeAll;
         }
     }
 
