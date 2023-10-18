@@ -1,0 +1,12 @@
+newmtl Tan
+Kd 0.6320754 0.4912229 0.3846119
+d 1
+
+newmtl TeleportAnchor
+Kd 0.6320754 0 0
+d 1
+
+newmtl White
+Kd 1 1 1
+d 1
+

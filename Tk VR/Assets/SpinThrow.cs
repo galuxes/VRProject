@@ -1,19 +1,40 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+
+enum Axis
+{
+    x,
+    y,
+    z
+}
 
 public class SpinThrow : MonoBehaviour
 {
     [SerializeField] private Rigidbody _rb;
     [SerializeField] private float spinModifier;
     [SerializeField] private bool isFlying = false;
-    
-    
+    [SerializeField] private Axis axisOfRotation;
+    private Vector3 axisVector3;
+
+    private void Start()
+    {
+        axisVector3 = axisOfRotation switch
+        {
+            Axis.x => Vector3.right,
+            Axis.y => Vector3.up,
+            Axis.z => Vector3.forward,
+            _ => axisVector3
+        };
+    }
+
     private void Update()
     {
         if (isFlying)
         {
-            transform.Rotate(Vector3.right * spinModifier);
+            transform.Rotate(axisVector3 * spinModifier);
         }
     }
 
