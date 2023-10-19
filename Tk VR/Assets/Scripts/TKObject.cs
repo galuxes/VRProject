@@ -45,7 +45,7 @@ namespace UnityEngine.XR.Interaction.Toolkit
 
         protected override void OnActivated(ActivateEventArgs args)
         {
-            Destroy(gameObject);
+            targetPosition.position = args.interactorObject.transform.position;
         }
 
         protected override void OnSelectEntered(SelectEnterEventArgs args)
