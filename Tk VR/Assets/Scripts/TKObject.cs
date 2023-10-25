@@ -12,19 +12,22 @@ namespace UnityEngine.XR.Interaction.Toolkit
     [SelectionBase]
     [DisallowMultipleComponent]
     [RequireComponent(typeof(Rigidbody))]
+    [RequireComponent(typeof(Outline))]
     [AddComponentMenu("XR/XR TK Interactable", 11)]
     public class TKObject : XRBaseInteractable
     {
         private Rigidbody m_Rigidbody;
+        private Outline m_Outline;
         private Transform targetPosition;
         [SerializeField]private GameObject targetObj;
         [SerializeField] private float tkForce = 1f, distanceToStop = 0.05f, rotationalSpeed = 0.1f, expulsionForce = 50f;
-        //private bool hovering;
+        private bool hovering;
         private float mass;
 
         private void Start()
         {
             m_Rigidbody = GetComponent<Rigidbody>();
+            m_Outline = GetComponent<Outline>();
             mass = m_Rigidbody.mass;
             
             targetObj = new GameObject();
@@ -34,6 +37,7 @@ namespace UnityEngine.XR.Interaction.Toolkit
 
         private void Update()
         {
+            if (!hovering) return;
             float distance = Vector3.Distance(transform.position, targetPosition.position);
             if (distance > distanceToStop)
             {
@@ -43,9 +47,24 @@ namespace UnityEngine.XR.Interaction.Toolkit
             transform.rotation = Quaternion.Slerp(transform.rotation, targetPosition.rotation, rotationalSpeed/mass);
         }
 
+        protected override void OnHoverEntered(HoverEnterEventArgs args)
+        {
+            m_Outline.enabled = true;
+        }
+
+        protected override void OnHoverExited(HoverExitEventArgs args)
+        {
+            m_Outline.enabled = false;
+        }
+
         protected override void OnActivated(ActivateEventArgs args)
         {
             targetPosition.position = args.interactorObject.transform.position;
+
+            /*if (interactorsSelecting.Count == 1)
+            {
+                Grab(args.interactorObject.transform);
+            }*/
         }
 
         protected override void OnDeactivated(DeactivateEventArgs args)
@@ -67,6 +86,7 @@ namespace UnityEngine.XR.Interaction.Toolkit
         
         private void Hover(Transform transform)
         {
+            hovering = true;
             targetPosition.parent = transform;
         }
 
@@ -74,16 +94,37 @@ namespace UnityEngine.XR.Interaction.Toolkit
         {
             if (interactorsSelecting.Count == 0)
             {
-                Drop();
+                HoverDrop();
             }
         }
 
-        private void Drop()
+        private void HoverDrop()
         {
+            hovering = false;
             targetPosition.rotation = transform.rotation;
             
             targetPosition.position = transform.position;
             targetPosition.SetParent(transform);
+        }
+
+        private Transform ogParent;
+        
+        protected virtual void Grab(Transform interactor)
+        {
+            HoverDrop();
+            
+            ogParent = transform.parent;
+            transform.SetParent(null);
+
+            // Reset detach velocities
+            //m_DetachVelocity = Vector3.zero;
+            //m_DetachAngularVelocity = Vector3.zero;
+            
+            transform.position = interactor.position;
+            transform.rotation = interactor.rotation;
+            transform.localScale = interactor.localScale;
+            transform.parent = interactor;
+            m_Rigidbody.useGravity = false;
         }
     }
     
