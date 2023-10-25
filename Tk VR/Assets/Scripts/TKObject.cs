@@ -18,7 +18,7 @@ namespace UnityEngine.XR.Interaction.Toolkit
         private Rigidbody m_Rigidbody;
         private Transform targetPosition;
         [SerializeField]private GameObject targetObj;
-        [SerializeField] private float tkForce = 1f, distanceToStop = 0.05f, rotationalSpeed = 0.1f;
+        [SerializeField] private float tkForce = 1f, distanceToStop = 0.05f, rotationalSpeed = 0.1f, expulsionForce = 50f;
         //private bool hovering;
         private float mass;
 
@@ -46,6 +46,11 @@ namespace UnityEngine.XR.Interaction.Toolkit
         protected override void OnActivated(ActivateEventArgs args)
         {
             targetPosition.position = args.interactorObject.transform.position;
+        }
+
+        protected override void OnDeactivated(DeactivateEventArgs args)
+        {
+            m_Rigidbody.velocity = args.interactorObject.transform.forward * expulsionForce;
         }
 
         protected override void OnSelectEntered(SelectEnterEventArgs args)
