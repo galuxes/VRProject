@@ -1,10 +1,9 @@
-using System;
+/*using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
-using UnityEditor.XR.Interaction.Toolkit;
+using UnityEditor.XR.Interaction.Toolkit;*/
 using UnityEngine;
-using UnityEngine.XR.Interaction.Toolkit;
 
 public class Spear : MonoBehaviour
 {
